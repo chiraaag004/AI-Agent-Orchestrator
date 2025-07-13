@@ -23,6 +23,8 @@ This project implements a sophisticated, multi-agent AI travel assistant using L
 
 ## 🏗️ Architecture
 
+![AI Agent Orchestrator Architecture](assets/architecture-diagram.png)
+
 The core of the agent is built with LangGraph, defining a stateful graph that orchestrates the flow of information:
 
 1.  **LLM Router**: The entry point. It analyzes the user's query to identify one or more intents (e.g., `flight_booking_manager`, `flight_information`).
