@@ -17,11 +17,14 @@ def continuation_router(state: AgentState) -> str:
     - If there are more intents to process, it routes to the next agent.
     - If all intents are processed, it routes to the final output node.
     """
-    processed = state.get("processed_intents", [])
+    processed = set(state.get("processed_intents", []))
     all_intents = state.get("intents", [])
-    if len(processed) == len(all_intents):
-        return "FINISH" # All tasks are done
-    else:
-        # Find the next unprocessed intent
-        next_intent = [i for i in all_intents if i not in processed][0]
-        return next_intent
+
+    # Find the next intent in the list that hasn't been processed yet.
+    # This is more robust than comparing lengths and handles repeated intents.
+    for intent in all_intents:
+        if intent not in processed:
+            return intent
+
+    # If all intents in the list have been processed, we are done.
+    return "FINISH"

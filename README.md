@@ -8,20 +8,36 @@ The first agent implemented on this platform is the **AI Travel Companion**, whi
 
 - **Multi-Agent Architecture:** Uses a `LangGraph` supervisor to route tasks to specialized agents (e.g., `flight_booking_manager`, `support_agent`).
 - **Intent-Based Routing:** An LLM-based router classifies user queries into one or more intents to determine the correct agent(s) to invoke.
-- **Tool Use:** Agents are equipped with specific tools (e.g., booking flights, checking status, FAQ lookup) to perform actions and retrieve information.
+- **Tool Use:** Agents are equipped with specific tools (e.g., booking flights, checking itineraries, checking flight status, FAQ lookup) to perform actions and retrieve information.
 - **Multi-LLM Support:** Easily switch between different LLM providers (Gemini, OpenAI, Claude) via environment variables.
 - **Multilingual Support:** Automatically detects the user's language, processes the query in English, and translates the final response back to the user's language.
-- **Conversational Memory:** Maintains conversation history to handle follow-up questions and context.
+- **Hybrid Conversational Memory:** Combines a short-term sliding window for immediate context with a long-term vector-based memory to recall important facts and preferences from earlier in the conversation.
 - **Observability:** Integrated with Langfuse for detailed tracing and debugging of agent interactions.
-- **Interactive UIs:** Includes a Streamlit-based chat application and an admin dashboard for monitoring agent traces.
+- **Multiple Interfaces:** Interact with the agent via a web-based Streamlit chat, a command-line interface, or an SMS interface powered by Twilio.
 
 ## 🛠️ Tech Stack
 
-- **Core Frameworks:** [LangChain](https://www.langchain.com/) & [LangGraph](https://langchain-ai.github.io/langgraph/) for building stateful, multi-agent applications.
-- **LLM Integrations:** Support for [Google Gemini](https://ai.google.dev/), [OpenAI](https://openai.com/), and [Anthropic Claude](https://www.anthropic.com/).
-- **Frontend:** [Streamlit](https://streamlit.io/) for creating the interactive chat UI and admin dashboard.
-- **Observability:** [Langfuse](https://langfuse.com/) for tracing, debugging, and monitoring agent performance.
-- **Language & Data:** Python 3.10+ and [Pandas](https://pandas.pydata.org/) for data handling.
+- **🧩 Core Frameworks:**  
+  [LangChain](https://www.langchain.com/) & [LangGraph](https://langchain-ai.github.io/langgraph/)  
+  Build stateful, multi-agent applications with flexible orchestration.
+
+- **🤖 LLM Integrations:**  
+  [Google Gemini](https://ai.google.dev/), [OpenAI](https://openai.com/), [Anthropic Claude](https://www.anthropic.com/)  
+  Easily switch providers via environment variables.
+
+- **💬 User Interfaces:**  
+  [Streamlit](https://streamlit.io/) for interactive web chat and dashboards  
+  [Flask](https://flask.palletsprojects.com/) & [Twilio](https://www.twilio.com/) for WhatsApp/SMS integration
+
+- **🔎 Observability:**  
+  [Langfuse](https://langfuse.com/)  
+  Trace, debug, and monitor agent performance and flows.
+
+- **🌐 Language & Data:**  
+  Python 3.10+  
+  [Pandas](https://pandas.pydata.org/) for data handling and export
+
+---
 
 ## 🏗️ Architecture
 
@@ -102,17 +118,47 @@ For quick testing and debugging, you can run an interactive session in your term
 python test_graph.py
 ```
 
+### 4. WhatsApp Integration via Twilio
+
+You can now interact with the AI Agent Orchestrator via WhatsApp using Twilio and Flask.  
+The integration is handled by the `twilio_app.py` application.
+
+- **How it works:**  
+  Incoming WhatsApp messages are received by Twilio, forwarded to your Flask app (`twilio_app.py`), processed by the agent, and the response is sent back to the user on WhatsApp.
+
+- **To run the WhatsApp integration server:**
+    ```bash
+    python apps/twilio_app.py
+    ```
+
+- **Configuration:**  
+  Make sure your `.env` file includes your Twilio credentials:
+  ```
+  TWILIO_ACCOUNT_SID=your_account_sid
+  TWILIO_AUTH_TOKEN=your_auth_token
+  TWILIO_WHATSAPP_NUMBER=whatsapp:+1234567890
+  ```
+
+- **Setup:**  
+  - Deploy the Flask app (`twilio_app.py`) on a public server or use [ngrok](https://ngrok.com/) for local development.
+  - Configure your Twilio WhatsApp sandbox to forward incoming messages to your Flask endpoint.
+
+---
+
 ## 📂 Project Structure
 
 ```
 ai_hackathon/
 ├── agents/         # Core agent logic, including the LangGraph definition, state, nodes, and routers.
-├── apps/           # Streamlit applications (chat app, dashboard).
+├── apps/           # Streamlit applications (chat app, dashboard), Flask Twilio WhatsApp app.
+│   ├── atca_app.py     # Streamlit chat app (main user interface)
+│   ├── dashboard.py    # Streamlit dashboard for Langfuse traces
+│   └── twilio_app.py   # Flask app for Twilio WhatsApp integration
 ├── config/         # Configuration files, settings, and prompts.
 │   └── prompts/    # Text files for different LLM prompts.
-├── data/           # Static data, like the FAQ knowledge base.
-├── tools/          # Individual tool definitions (e.g., book_flight, faq_tool).
-├── utils/          # Helper utilities for loading tools and prompts.
+├── data/           # Mock data, like the FAQ knowledge base.
+├── tools/          # Individual tool definitions (e.g., book_flight, itinerary_checker, flight_status_checker, faq_tool).
+├── utils/          # Helper utilities for loading tools, prompts, and setting up memory.
 ├── workflows/      # High-level workflow logic (e.g., base agent, language helpers, router).
 ├── .env.example    # Environment variable template.
 ├── requirements.txt# Python dependencies.
@@ -128,6 +174,21 @@ ai_hackathon/
 - **CONFIDENCE_THRESHOLD:** The confidence score (0-100) below which the router defaults to the "general" agent.
 - **CONVERSATION_WINDOW_SIZE:** The number of recent messages to include in the agent's memory.
 
+## 🧠 Long-Term Memory
+
+Beyond the standard conversational window (`CONVERSATION_WINDOW_SIZE`), this project includes a mechanism for long-term memory to provide a more personalized and context-aware experience.
+
+### How It Works
+
+We use `VectorStoreRetrieverMemory` from LangChain, which works as follows:
+
+1.  **Saving Context:** Key pieces of information from the conversation (e.g., user preferences, booking details) are identified and saved to an in-memory FAISS vector store.
+2.  **Embedding:** Each saved piece of information is converted into a numerical vector (an embedding).
+3.  **Retrieval:** When a new query comes in, the agent searches the vector store for the most semantically similar memories.
+4.  **Context Injection:** These relevant memories are injected back into the agent's prompt, allowing it to recall past details that are relevant to the current topic, even if they occurred much earlier in the conversation.
+
+This setup is managed by `utils/memory_setup.py`. For production use, the in-memory FAISS store could be swapped with a persistent vector database like ChromaDB or a managed service.
+
 ## 📊 Observability with Langfuse
 
 This project is instrumented with Langfuse to provide deep insights into the agent's execution. When you run the agent (either via the Streamlit app or the test script), traces are automatically sent to your Langfuse project.
@@ -137,4 +198,3 @@ You can:
 - Inspect the inputs and outputs of each node (LLM calls, tool executions).
 - Debug errors and analyze latency and token usage.
 - Use the provided Streamlit dashboard (`apps/dashboard.py`) for a high-level overview of traces.
-

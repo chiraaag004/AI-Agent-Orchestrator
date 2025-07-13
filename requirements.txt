@@ -17,3 +17,7 @@ pandas
 
 # Environment variable management
 python-dotenv
+
+# For Long-Term Memory
+faiss-cpu
+sentence-transformers

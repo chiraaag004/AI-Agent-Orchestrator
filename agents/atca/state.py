@@ -1,6 +1,7 @@
 # d:\Work\ai_hackathon\agents\atca\state.py
 from typing import TypedDict, List, Optional
 from langchain_core.messages import BaseMessage
+from langchain.memory import VectorStoreRetrieverMemory
 
 class AgentState(TypedDict):
     """
@@ -15,3 +16,4 @@ class AgentState(TypedDict):
     last_completed_intent: Optional[str]    # The last intent that was completed.
     output: str                             # The raw output from the last agent run.
     aggregated_output: str                  # The aggregated output from all agent runs, which is synthesized for the final response.
+    memory: Optional[VectorStoreRetrieverMemory] # Session-specific long-term memory object.

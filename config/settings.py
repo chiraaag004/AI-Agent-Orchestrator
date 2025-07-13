@@ -1,7 +1,4 @@
-from dotenv import load_dotenv, find_dotenv
 import os
-
-load_dotenv()
 
 # Set project config
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "gemini")
@@ -22,17 +19,20 @@ CONFIDENCE_THRESHOLD = int(os.getenv("CONFIDENCE_THRESHOLD", 70))
 # means the agent has access to all available tools.
 AGENT_TOOL_MAPPING = {
     "flight_booking_manager": [
-        "book_flight_tool",
-        "cancel_booking_tool"
+        "book_flight_tool", # Matches book_flight.py
+        "cancel_booking_tool" # Matches cancel_booking.py
     ],
     "support_agent": [
-        "faq_tool" # Handles general FAQs and policy questions
+        "faq_tool" # Matches faq_tool.py
     ],
     "flight_information": [
-        "flight_status_tool"
+        "get_flight_status" # Matches flight_status_checker.py
     ],
     "emergency_services": [
-        "emergency_help_tool"
+        "emergency_help_tool" # Matches emergency_help.py
+    ],
+    "itinerary_checker": [
+        "check_flight_itinerary" # Matches itinerary_checker.py
     ],
     "general": None # Fallback agent with access to all tools
 }

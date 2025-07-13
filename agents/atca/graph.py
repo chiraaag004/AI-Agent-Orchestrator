@@ -32,6 +32,9 @@ graph.set_entry_point("llm_router")
 # The map must include all possible outputs from the initial_router.
 # This map is now derived directly from the single source of truth.
 initial_route_map = {agent_name: agent_name for agent_name in AGENT_TOOL_MAPPING.keys()}
+# It's also possible for the initial router to decide no action is needed (e.g., user says "thank you").
+# We need to add a "FINISH" path to handle this gracefully, routing to the summarizer.
+initial_route_map["FINISH"] = "summarizer"
 graph.add_conditional_edges("llm_router", initial_router, initial_route_map)
 
 # The continuation router decides whether to run another agent or finish.

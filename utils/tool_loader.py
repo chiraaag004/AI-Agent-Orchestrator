@@ -1,4 +1,3 @@
-# d:\Work\ai_hackathon\utils\tool_loader.py
 import os
 import importlib.util
 import inspect

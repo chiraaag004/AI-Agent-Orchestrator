@@ -1,0 +1,7 @@
+booking_reference,passenger_name,flight_number,origin,destination,departure_time,arrival_time,status
+ABC123,John Doe,UA456,"New York (JFK)","Los Angeles (LAX)",2024-09-15T08:00:00Z,2024-09-15T11:30:00Z,On Time
+XYZ789,Jane Smith,DL789,"San Francisco (SFO)","Chicago (ORD)",2024-09-16T12:00:00Z,2024-09-16T18:00:00Z,Delayed
+QWE456,Peter Jones,AA123,"Chicago (ORD)","New York (JFK)",2024-09-17T15:00:00Z,2024-09-17T18:30:00Z,Boarding
+CDE789,Emily Brown,SW222,"Dallas (DAL)","Denver (DEN)",2024-09-18T10:00:00Z,2024-09-18T11:30:00Z,Cancelled
+FGH123,Michael Lee,BA285,"London (LHR)","New York (JFK)",2024-09-19T11:00:00Z,2024-09-19T14:00:00Z,On Time
+JKL456,John Doe,UA457,"Los Angeles (LAX)","New York (JFK)",2024-09-20T14:00:00Z,2024-09-20T22:30:00Z,On Time

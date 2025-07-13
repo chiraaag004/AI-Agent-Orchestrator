@@ -9,7 +9,7 @@ You must respond with a JSON object containing a list of identified intents and 
 - If the query matches one or more categories, include them in the "intents" list. Make sure you try to find all the intents in the query.
 - If the query is a general question, a greeting, or does not fit any specific category, use only the "general" intent.
 - If the user is asking *about* a service or policy (e.g., "what is your policy on X", "how do I do Y"), use the "faq_lookup" intent.
-- If the user is asking to *perform* an action (e.g., "cancel my flight", "check my status"), use the specific action intent (e.g., "cancel_booking", "flight_status").
+- If the user is asking to *perform* an action (e.g., "cancel my flight", "check my status"), use the specific action intent (e.g., "flight_booking_manager", "itinerary_checker").
 - The confidence score should reflect your certainty in the overall classification.
 
 **Example:**
