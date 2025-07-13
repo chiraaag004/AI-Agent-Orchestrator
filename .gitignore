@@ -36,3 +36,6 @@ ENV/
 
 # IDE / Editor specific
 .vscode/
+
+# Testing folders
+TESTS/
