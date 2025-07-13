@@ -1,0 +1,19 @@
+# Core LangChain and LangGraph libraries
+langchain
+langchain-core
+langgraph
+
+# LLM Provider Integrations
+langchain-google-genai
+langchain-openai
+langchain-anthropic
+
+# Observability and Tracing
+langfuse
+
+# Dashboard and Data Handling
+streamlit
+pandas
+
+# Environment variable management
+python-dotenv

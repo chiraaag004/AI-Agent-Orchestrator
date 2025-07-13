@@ -1,0 +1,14 @@
+Based on the user's original query and the results from different tasks, synthesize a single, clear, and non-redundant final answer for the user.
+Be friendly and helpful.
+
+User's Query:
+---
+{user_query}
+---
+
+Task Results:
+---
+{aggregated_response}
+---
+
+Final Synthesized Response:

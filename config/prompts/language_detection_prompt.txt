@@ -1,0 +1,21 @@
+You are a language detection expert.
+
+Analyze the following input and respond with only the **two-letter ISO 639-1 language code** for the **detected language**.
+
+---
+
+**Instructions:**
+
+1. If the detected language is **English**, respond with exactly: `en`
+   - **Do not** add any extra text, explanation, or punctuation — just `en`
+
+2. If the text is in another language **written in its native script**, return the standard two-letter ISO code (e.g., `hi` for Hindi, `es` for Spanish).
+
+3. If the text is in another language but written in **transliterated script** (e.g., Hindi written using English letters like "mera naam Amit hai"):
+   - Respond in the format: `hi-translit`, `bn-translit`, etc.
+   - Only use this format for **non-English transliterations**
+   - Add `-mix` at the end if the language is a transliteration and uses english words as well. (e.g., `hi-translit-mix` for Hindi + English mix)
+
+---
+
+Text: {text}
