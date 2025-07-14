@@ -2,7 +2,9 @@ import streamlit as st
 from langfuse import get_client
 import langfuse as langfuse_module
 import pandas as pd
+import plotly.express as px
 import time
+from datetime import datetime
 
 st.set_page_config(
     page_title="Agent Admin Dashboard",
@@ -18,35 +20,28 @@ except Exception as e:
 
 @st.cache_data(ttl=300)
 def get_traces():
-    """Fetches all traces from Langfuse."""
-    full_traces = []
-    # 1. List traces to get their IDs. The list method returns a lightweight object.
-    trace_list = langfuse_client.api.trace.list(limit=20) # Adjust limit as needed
-    
-    # 2. Fetch each trace individually to get the full object with metadata.
+    """Fetch all traces from Langfuse (deep metadata fetch)."""
+    traces = []
+    trace_list = langfuse_client.api.trace.list(limit=20)  # increase if needed
     for trace_summary in trace_list.data:
         try:
-            # The full trace object from .get() has the metadata attribute.
             full_trace = langfuse_client.api.trace.get(trace_summary.id)
-            full_traces.append(full_trace)
-            # Add a small delay to avoid hitting API rate limits.
-            time.sleep(0.1) # 100ms delay
+            traces.append(full_trace)
+            time.sleep(0.1)
         except Exception as e:
-            st.sidebar.error(f"Failed to load trace {trace_summary.id}: {e}")
-            # If we hit a rate limit, it's best to stop trying.
+            st.sidebar.error(f"Trace fetch error: {e}")
             if "429" in str(e):
-                st.sidebar.error("Rate limit exceeded. Stopping trace fetch.")
                 break
-    return full_traces
+    return traces
 
 def render_dashboard(traces):
     if not traces:
-        st.warning("No traces found. Run your agent to generate some data.")
+        st.warning("No traces found. Trigger some agent calls first.")
         return
 
+    # Build DataFrame
     trace_data = []
     for trace in traces:
-        # Defensively access input/output, as they can be None for incomplete traces
         trace_input = trace.input or {}
         trace_output = trace.output or {}
         metadata = trace.metadata or {}
@@ -58,37 +53,101 @@ def render_dashboard(traces):
             "Agent Response": trace_output.get("aggregated_output", "N/A"),
             "Intents": ", ".join(trace_output.get("intents") or []),
             "Agents Run": ", ".join(trace_output.get("processed_intents") or []),
-            "No. of Observations": len(trace.observations) if trace.observations else 0,
-            "Trace URL": langfuse_client.get_trace_url(trace_id=trace.id)  # Use the SDK method
+            "Latency (s)": trace.latency if trace.latency is not None else None,
+            "Total Cost": trace.total_cost if trace.total_cost is not None else None,
+            "Observations": len(trace.observations) if trace.observations else 0,
+            "Trace URL": langfuse_client.get_trace_url(trace_id=trace.id)
         })
 
     df = pd.DataFrame(trace_data)
-    st.sidebar.header("Filters")
-    st.sidebar.info(f"Langfuse Version: {langfuse_module.__version__}")
+    df["Timestamp"] = pd.to_datetime(df["Timestamp"])
 
-    # Filter out None values from the list before sorting to prevent the TypeError.
-    unique_langs = [lang for lang in df["Language"].unique().tolist() if lang is not None]
-    languages = ["All"] + sorted(unique_langs)
-    selected_language = st.sidebar.selectbox("Filter by Language", options=languages)
-    if selected_language != "All":
-        df = df[df["Language"] == selected_language]
+    # Sidebar Filters
+    st.sidebar.header("🔍 Filters")
+    st.sidebar.info(f"Langfuse v{langfuse_module.__version__}")
+    st.sidebar.markdown(f"🕒 Last Sync: {datetime.now().strftime('%H:%M:%S')}")
 
-    all_agents = sorted(list(set(agent for agents in df["Agents Run"] for agent in agents.split(", ") if agent)))
-    selected_agent = st.sidebar.multiselect("Filter by Agent Run", options=all_agents)
-    if selected_agent:
-        df = df[df["Agents Run"].str.contains("|".join(selected_agent))]
+    lang_options = ["All"] + sorted(df["Language"].dropna().unique().tolist())
+    selected_lang = st.sidebar.selectbox("Language", lang_options)
+    if selected_lang != "All":
+        df = df[df["Language"] == selected_lang]
 
-    st.title("📊 Agent Admin Dashboard")
-    st.markdown("An overview of agent interactions, powered by Langfuse traces.")
-    st.dataframe(
-        df,
-        column_config={
-            "Trace URL": st.column_config.LinkColumn("View Trace", display_text="🔗 Open")
-        },
-        hide_index=True,
-        use_container_width=True
-    )
-    st.info(f"Displaying {len(df)} of {len(traces)} total traces.")
+    agent_options = sorted(set(agent for x in df["Agents Run"] for agent in x.split(", ") if agent))
+    selected_agents = st.sidebar.multiselect("Agent(s)", agent_options)
+    if selected_agents:
+        df = df[df["Agents Run"].str.contains("|".join(selected_agents))]
+
+    # KPIs
+    kpi1, kpi2, kpi3 = st.columns(3)
+    kpi1.metric("📈 Total Traces", len(df))
+    kpi2.metric("⏱️ Avg Latency (s)", f"{df['Latency (s)'].dropna().mean():.2f}" if not df['Latency (s)'].isna().all() else "N/A")
+    kpi3.metric("🔢 Avg Tokens", f"{df['Total Cost'].dropna().mean():.0f}" if not df['Total Cost'].isna().all() else "N/A")
+
+    # Tabs
+    tab1, tab2, tab3 = st.tabs(["📋 Table View", "📊 Visual Analytics", "🧠 Trace Breakdown"])
+
+    with tab1:
+        st.dataframe(
+            df,
+            column_config={
+                "Trace URL": st.column_config.LinkColumn("Trace", display_text="🔗 Open")
+            },
+            use_container_width=True,
+            hide_index=True
+        )
+
+    with tab2:
+        col1, col2 = st.columns(2)
+
+        with col1:
+            if "Agents Run" in df.columns:
+                agent_counts = (
+                    df["Agents Run"]
+                    .str.split(", ")
+                    .explode()
+                    .value_counts()
+                    .reset_index()
+                )
+                agent_counts.columns = ["Agent", "Count"]
+                fig_agents = px.bar(
+                    agent_counts,
+                    x="Agent",
+                    y="Count",
+                    labels={"Agent": "Agent", "Count": "Usage Count"},
+                    title="🧑‍💼 Agent Usage"
+                )
+                st.plotly_chart(fig_agents, use_container_width=True)
+
+        with col2:
+            if "Latency (s)" in df.columns and not df['Latency (s)'].isna().all():
+                fig_latency = px.histogram(
+                    df,
+                    x="Latency (s)",
+                    nbins=10,
+                    title="⏱️ Latency Distribution"
+                )
+                st.plotly_chart(fig_latency, use_container_width=True)
+
+        st.markdown("### 📅 Traces Over Time")
+
+        if "Timestamp" in df.columns:
+            df["Date"] = pd.to_datetime(df["Timestamp"]).dt.date
+            daily_counts = df.groupby("Date").size().reset_index(name="Traces")
+            fig_time = px.line(daily_counts, x="Date", y="Traces", title="📈 Daily Trace Count")
+            st.plotly_chart(fig_time, use_container_width=True)
+
+
+
+    with tab3:
+        selected_trace = st.selectbox("Select Trace for Details", df["Trace ID"])
+        selected = df[df["Trace ID"] == selected_trace].iloc[0]
+
+        st.markdown(f"**User Query:** {selected['User Query']}")
+        st.markdown(f"**Agent Response:** {selected['Agent Response']}")
+        st.markdown(f"**Agents Involved:** {selected['Agents Run']}")
+        st.markdown(f"**Latency:** {selected['Latency (s)']} seconds")
+        st.markdown(f"**Total Cost:** {selected['Total Cost']}")
+        st.markdown(f"[🔗 View Full Trace in Langfuse]({selected['Trace URL']})")
 
 traces = get_traces()
 render_dashboard(traces)

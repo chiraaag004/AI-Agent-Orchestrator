@@ -29,3 +29,4 @@ onnxruntime
 piper-tts
 flask-sock
 gevent-websocket
+plotly
