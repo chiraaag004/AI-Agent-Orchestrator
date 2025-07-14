@@ -39,3 +39,6 @@ ENV/
 
 # Testing folders
 TESTS/
+
+# Logs
+models/

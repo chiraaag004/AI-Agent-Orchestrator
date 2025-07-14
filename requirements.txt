@@ -21,3 +21,11 @@ python-dotenv
 # For Long-Term Memory
 faiss-cpu
 sentence-transformers
+torch
+
+flask
+openai-whisper
+onnxruntime
+piper-tts
+flask-sock
+gevent-websocket

@@ -11,7 +11,18 @@ ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 
 
 # Router settings
-CONFIDENCE_THRESHOLD = int(os.getenv("CONFIDENCE_THRESHOLD", 70))
+confidence_str = os.getenv("CONFIDENCE_THRESHOLD", "70")
+CONFIDENCE_THRESHOLD = int(confidence_str.split('#')[0].strip())
+
+silence_threshold_str = os.getenv("SILENCE_THRESHOLD_S", "0.7")
+# Strip inline comments and whitespace before converting to handle malformed .env files
+SILENCE_THRESHOLD_S = float(silence_threshold_str.split('#')[0].strip())
+
+# Voice Service settings
+# Whisper model for Speech-to-Text (e.g., tiny.en, base.en, small.en)
+WHISPER_MODEL_NAME = os.getenv("WHISPER_MODEL_NAME", "base.en")
+WHISPER_DOWNLOAD_ROOT = os.getenv("WHISPER_DOWNLOAD_ROOT", "models/stt")
+PIPER_VOICE_MODEL_PATH = os.getenv("PIPER_VOICE_MODEL_PATH", "models/tts/en_US-lessac-medium.onnx")
 
 # New agent architecture: Define agents and their specific tools.
 # The keys are the agent names the router will use.
@@ -47,4 +58,5 @@ AGENT_TOOL_MAPPING = {
 ROUTER_INTENTS = list(AGENT_TOOL_MAPPING.keys())
 
 # Agent Memory settings
-CONVERSATION_WINDOW_SIZE = int(os.getenv("CONVERSATION_WINDOW_SIZE", 6))
+conversation_window_str = os.getenv("CONVERSATION_WINDOW_SIZE", "6")
+CONVERSATION_WINDOW_SIZE = int(conversation_window_str.split('#')[0].strip())

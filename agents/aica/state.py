@@ -1,11 +1,11 @@
-# d:\Work\ai_hackathon\agents\atca\state.py
+# d:\Work\ai_hackathon\agents\aica\state.py
 from typing import TypedDict, List, Optional
 from langchain_core.messages import BaseMessage
 from langchain.memory import VectorStoreRetrieverMemory
 
 class AgentState(TypedDict):
     """
-    Represents the state of the AI Travel Companion Agent.
+    Represents the state of the AI Call Agent.
     """
     original_query: str                     # The original user query, untouched.
     detected_language: str                  # The language code detected from the original query (e.g., 'es', 'fr', 'en').
