@@ -83,13 +83,16 @@ def create_agent_runner(agent_name: str, tool_names: list[str] = None):
 
         task_description = "handle a general user request that did not fit a specific category" if agent_name == "general" else agent_name.replace("_", " ")
 
+        current_time = state.get("current_time", "Not available. Please ask the user for the current date if needed.")
+        formatted_base_prompt = BASE_PROMPT.format(current_time=current_time)
+
         focused_prompt_str = FOCUSED_TASK_PROMPT.format(
             intent_name=task_description,
             conversation_history=history_str
         )
 
         messages_for_agent = [
-            SystemMessage(content=f"{BASE_PROMPT}\n\n{retrieved_memory_str}\n\n{focused_prompt_str}")
+            SystemMessage(content=f"{formatted_base_prompt}\n\n{retrieved_memory_str}\n\n{focused_prompt_str}")
         ] + clean_history
 
         # Before invoking the agent, ensure last message is HumanMessage

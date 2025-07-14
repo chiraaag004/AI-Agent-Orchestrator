@@ -34,6 +34,12 @@ AGENT_TOOL_MAPPING = {
     "itinerary_checker": [
         "check_flight_itinerary" # Matches itinerary_checker.py
     ],
+    "hotel_searcher": [
+        "search_hotels" # from hotel_searcher.py
+    ],
+    "weather_checker": [
+        "get_weather_forecast" # from weather_checker.py
+    ],
     "general": None # Fallback agent with access to all tools
 }
 

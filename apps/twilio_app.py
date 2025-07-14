@@ -2,6 +2,7 @@ import sys
 import os
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
+from datetime import datetime, timezone
 from dotenv import load_dotenv
 
 # This ensures that the script can find the other modules in the project
@@ -80,6 +81,7 @@ def sms_reply():
     graph_input["original_query"] = prompt
     graph_input["memory"] = long_term_memory
     graph_input["messages"] = graph_input["messages"][-CONVERSATION_WINDOW_SIZE:]
+    graph_input["current_time"] = datetime.now(timezone.utc).isoformat()
 
     try:
         # Invoke the graph with the prepared, windowed input

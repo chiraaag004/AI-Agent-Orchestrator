@@ -1,0 +1,8 @@
+city,hotel_name,price_per_night,rating,amenities
+"New York","The Plaza",950,4.8,"Pool,Spa,Gym"
+"New York","The Standard",450,4.5,"Rooftop Bar,Free WiFi"
+"London","The Savoy",800,4.9,"River View,Butler Service"
+"London","The Hoxton",250,4.6,"Free WiFi,Restaurant"
+"Tokyo","Park Hyatt Tokyo",1100,4.9,"Sky Bar,Pool,Spa"
+"Tokyo","Shinjuku Granbell Hotel",200,4.4,"Free WiFi,Bar"
+"Paris","Ritz Paris",1500,5.0,"Spa,Gardens,Fine Dining"
