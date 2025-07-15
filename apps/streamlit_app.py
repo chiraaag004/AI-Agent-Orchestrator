@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 # This ensures that the script can find the other modules in the project
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from agents.atca.graph import travel_graph
+from hospitalitybot.graph import hospitality_graph
 from langchain_core.messages import HumanMessage, AIMessage
 from workflows.language_helpers import detect_language, translate_text
 from langfuse import get_client
@@ -108,7 +108,7 @@ def handle_user_input():
 
             try:
                 # Invoke the graph with the prepared, windowed input
-                result = travel_graph.invoke(graph_input, config=config)
+                result = hospitality_graph.invoke(graph_input, config=config)
 
                 # Translate response back to user's language
                 # The result from the graph contains the new AI message. We should not assume it

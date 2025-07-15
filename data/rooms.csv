@@ -1,0 +1,10 @@
+room_number,room_type,view,amenities
+101,suite,ocean,"king bed,balcony,jacuzzi,mini-bar"
+102,double,city,"twin beds,sofa,tv"
+103,single,city,"queen bed,desk"
+104,suite,ocean,"king bed,balcony,jacuzzi,mini-bar"
+105,double,city,"twin beds,sofa,tv"
+106,single,city,"queen bed,desk"
+107,suite,ocean,"king bed,balcony,jacuzzi,mini-bar"
+108,double,city,"twin beds,sofa,tv"
+109,single,city,"queen bed,desk"

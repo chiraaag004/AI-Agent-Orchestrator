@@ -5,6 +5,7 @@ import pandas as pd
 import plotly.express as px
 import time
 from datetime import datetime
+from streamlit_autorefresh import st_autorefresh
 
 st.set_page_config(
     page_title="Agent Admin Dashboard",
@@ -12,24 +13,28 @@ st.set_page_config(
     layout="wide"
 )
 
+# Automatically refresh every 10 seconds
+st_autorefresh(interval=10000, key="datarefresh")
+
+
+
 try:
     langfuse_client = get_client()
 except Exception as e:
-    st.error(f"Failed to initialize Langfuse client. Make sure your .env file is configured correctly. Error: {e}")
+    st.error(f"Langfuse error: {e}")
     st.stop()
 
 @st.cache_data(ttl=300)
 def get_traces():
-    """Fetch all traces from Langfuse (deep metadata fetch)."""
     traces = []
-    trace_list = langfuse_client.api.trace.list(limit=20)  # increase if needed
+    trace_list = langfuse_client.api.trace.list(limit=20)
     for trace_summary in trace_list.data:
         try:
             full_trace = langfuse_client.api.trace.get(trace_summary.id)
             traces.append(full_trace)
             time.sleep(0.1)
         except Exception as e:
-            st.sidebar.error(f"Trace fetch error: {e}")
+            st.sidebar.error(f"Trace error: {e}")
             if "429" in str(e):
                 break
     return traces
@@ -54,7 +59,6 @@ def render_dashboard(traces):
             "Intents": ", ".join(trace_output.get("intents") or []),
             "Agents Run": ", ".join(trace_output.get("processed_intents") or []),
             "Latency (s)": trace.latency if trace.latency is not None else None,
-            "Total Cost": trace.total_cost if trace.total_cost is not None else None,
             "Observations": len(trace.observations) if trace.observations else 0,
             "Trace URL": langfuse_client.get_trace_url(trace_id=trace.id)
         })
@@ -78,13 +82,12 @@ def render_dashboard(traces):
         df = df[df["Agents Run"].str.contains("|".join(selected_agents))]
 
     # KPIs
-    kpi1, kpi2, kpi3 = st.columns(3)
+    kpi1, kpi2 = st.columns(2)
     kpi1.metric("📈 Total Traces", len(df))
     kpi2.metric("⏱️ Avg Latency (s)", f"{df['Latency (s)'].dropna().mean():.2f}" if not df['Latency (s)'].isna().all() else "N/A")
-    kpi3.metric("🔢 Avg Tokens", f"{df['Total Cost'].dropna().mean():.0f}" if not df['Total Cost'].isna().all() else "N/A")
 
     # Tabs
-    tab1, tab2, tab3 = st.tabs(["📋 Table View", "📊 Visual Analytics", "🧠 Trace Breakdown"])
+    tab1, tab2, tab3, tab4 = st.tabs(["📋 Table View", "📊 Visual Analytics", "🧠 Trace Breakdown", "📝 Bookings Overview"])
 
     with tab1:
         st.dataframe(
@@ -136,8 +139,6 @@ def render_dashboard(traces):
             fig_time = px.line(daily_counts, x="Date", y="Traces", title="📈 Daily Trace Count")
             st.plotly_chart(fig_time, use_container_width=True)
 
-
-
     with tab3:
         selected_trace = st.selectbox("Select Trace for Details", df["Trace ID"])
         selected = df[df["Trace ID"] == selected_trace].iloc[0]
@@ -146,8 +147,31 @@ def render_dashboard(traces):
         st.markdown(f"**Agent Response:** {selected['Agent Response']}")
         st.markdown(f"**Agents Involved:** {selected['Agents Run']}")
         st.markdown(f"**Latency:** {selected['Latency (s)']} seconds")
-        st.markdown(f"**Total Cost:** {selected['Total Cost']}")
         st.markdown(f"[🔗 View Full Trace in Langfuse]({selected['Trace URL']})")
 
+        with tab4:
+            st.markdown("## 📝 Bookings Overview")
+
+            table_options = {
+                "Room Bookings": "data/bookings.csv",
+                "Room Service Orders": "data/room_service.csv",
+                "Transport Bookings": "data/transport_bookings.csv"
+            }
+
+            selected_table = st.selectbox("Select Booking Table", options=list(table_options.keys()))
+
+            try:
+                df_table = pd.read_csv(table_options[selected_table])
+                st.markdown(f"### 📄 {selected_table}")
+                st.dataframe(df_table, use_container_width=True, hide_index=True)
+                st.metric(f"{selected_table}", len(df_table))
+            except FileNotFoundError:
+                st.error(f"❌ File not found: {table_options[selected_table]}")
+            except Exception as e:
+                st.error(f"⚠️ Error loading data: {e}")
+
+
+
+# Run app
 traces = get_traces()
 render_dashboard(traces)

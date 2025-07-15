@@ -1,5 +1,6 @@
-# agents/aica/graph.py
+# agents/atca/graph.py
 from langgraph.graph import StateGraph, END
+
 # Local imports for the supervisor agent components
 from .state import AgentState
 from .nodes import aggregator_node, create_agent_runner, summarizer_node
@@ -17,7 +18,7 @@ graph = StateGraph(AgentState)
 graph.add_node("llm_router", route_intent)
 graph.add_node("aggregator", aggregator_node)
 graph.add_node("summarizer", summarizer_node)
-graph.add_node("final_output", format_output)
+graph.add_node("final_output", format_output) # Renamed for clarity
 
 # 3. Dynamically create a node for each defined agent capability
 for agent_name, tool_names in AGENT_TOOL_MAPPING.items():
@@ -27,10 +28,16 @@ for agent_name, tool_names in AGENT_TOOL_MAPPING.items():
 # 4. Wire the graph together
 graph.set_entry_point("llm_router")
 
+# The first router decides which agent to run first.
+# The map must include all possible outputs from the initial_router.
+# This map is now derived directly from the single source of truth.
 initial_route_map = {agent_name: agent_name for agent_name in AGENT_TOOL_MAPPING.keys()}
+# It's also possible for the initial router to decide no action is needed (e.g., user says "thank you").
+# We need to add a "FINISH" path to handle this gracefully, routing to the summarizer.
 initial_route_map["FINISH"] = "summarizer"
 graph.add_conditional_edges("llm_router", initial_router, initial_route_map)
 
+# The continuation router decides whether to run another agent or finish.
 continuation_route_map = {agent_name: agent_name for agent_name in AGENT_TOOL_MAPPING.keys()}
 continuation_route_map["FINISH"] = "summarizer"
 graph.add_conditional_edges(
@@ -43,4 +50,4 @@ graph.add_edge("summarizer", "final_output")
 graph.add_edge("final_output", END)
 
 # 5. Export LangGraph as an executable object
-aica_graph = graph.compile()
+hospitality_graph = graph.compile()

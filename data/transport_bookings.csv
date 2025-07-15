@@ -1,0 +1,4 @@
+guest_name,transport_type,pickup_time,destination
+Alice,taxi,10:00,Airport
+Bob,shuttle,13:30,Conference Center
+Charlie,taxi,18:00,Mall

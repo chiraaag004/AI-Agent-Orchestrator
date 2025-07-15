@@ -29,24 +29,26 @@ PIPER_VOICE_MODEL_PATH = os.getenv("PIPER_VOICE_MODEL_PATH", "models/tts/en_US-l
 # The values are the names of the tools for that agent. A value of `None`
 # means the agent has access to all available tools.
 AGENT_TOOL_MAPPING = {
-    "flight_booking_manager": [
-        "book_flight_tool", # Matches book_flight.py
-        "cancel_booking_tool" # Matches cancel_booking.py
-    ],
     "support_agent": [
         "faq_tool" # Matches faq_tool.py
-    ],
-    "flight_information": [
-        "get_flight_status" # Matches flight_status_checker.py
     ],
     "emergency_services": [
         "emergency_help_tool" # Matches emergency_help.py
     ],
-    "itinerary_checker": [
-        "check_flight_itinerary" # Matches itinerary_checker.py
+    "hotel_services": [
+        "book_room_tool", # from hotel_tool.py
+        "room_service_tool", # from hotel_searcher.py
+        "hotel_faq_tool", # from hotel_tool.py
+        "get_hotel_info_tool", # from hotel_tool.py
+        "get_room_details_tool" # from hotel_searcher.py
     ],
-    "hotel_searcher": [
-        "search_hotels" # from hotel_searcher.py
+    "attractions_agent": [
+        "find_nearby_attractions_tool", # from attractions_tool.py
+        "provide_local_recommendations_tool" # from attractions_tool.py
+    ],
+    "transportation_agent": [
+        "local_transport_tool", # from local_transport_tool.py
+        "book_local_transport_tool" # from local_transport_tool.py
     ],
     "weather_checker": [
         "get_weather_forecast" # from weather_checker.py

@@ -1,4 +1,4 @@
-# agents/aica/nodes.py
+# agents/hospitalitybot/nodes.py
 from .state import AgentState
 from workflows.base_agent import ReActAgent
 from workflows.action_tool_registry import TOOL_MAP
@@ -95,6 +95,11 @@ def create_agent_runner(agent_name: str, tool_names: list[str] = None):
             SystemMessage(content=f"{formatted_base_prompt}\n\n{retrieved_memory_str}\n\n{focused_prompt_str}")
         ] + clean_history
 
+        # Before invoking the agent, ensure last message is HumanMessage
+        if not isinstance(state["messages"][-1], HumanMessage):
+            print("Warning: Last message is not HumanMessage. Agent may not respond correctly.")
+            # Optionally, skip invocation or add a dummy HumanMessage
+
         # 4. Run the agent.
         agent_sub_state = {"messages": messages_for_agent}
         result_state = agent_instance(agent_sub_state)
@@ -110,7 +115,7 @@ def create_agent_runner(agent_name: str, tool_names: list[str] = None):
             except Exception as e:
                 print(f"Memory save_context error: {e}")
 
-        # 6. Return only the new information this node generated.
+        # 6. Return only the new information this node generated. Do not modify the messages list.
         return {
             "output": agent_output,
             "last_completed_intent": agent_name,

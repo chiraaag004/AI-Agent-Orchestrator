@@ -1,117 +1,112 @@
-# ✈️ AI Travel FAQ Knowledge Base
+# 🏨 Hotel Concierge FAQ – AI Hospitality Companion
 
-## Booking
-
-**Q: How can I book a flight?**  
-A: You can book a flight through our website, mobile app, or by speaking with the AI Travel Companion.
-
-**Q: Can I book multiple flights in one go?**  
-A: Yes, multi-city and round-trip bookings are supported.
-
-**Q: Can I pay later after booking?**  
-A: No, all bookings must be paid for immediately to confirm your ticket.
-
-**Q: Can I book a ticket for someone else?**  
-A: Yes, simply enter their details during the booking process.
+Welcome to the **AI Hospitality Concierge FAQ**. You can ask the assistant any of these questions, or browse below to find help with bookings, check-in, dining, amenities, and more.
 
 ---
 
-## Flight Cancellation
+## 📅 Booking & Reservations
 
-**Q: How do I cancel a flight?**  
-A: You can cancel via the app, website, or by asking the AI Assistant to cancel for you.
+**Q: How can I book a room?**
+A: You can book a room via our website, mobile app, or directly through this AI Concierge.
 
-**Q: Will I get a refund after canceling?**  
-A: Refund eligibility depends on your fare class. Non-refundable tickets will not be refunded.
+**Q: Can I modify or cancel my booking?**
+A: Yes, just let the AI Assistant know your reservation number, and we’ll assist you with changes or cancellations.
 
-**Q: Is there a cancellation fee?**  
-A: Yes, most tickets incur a cancellation fee depending on the airline and timing.
+**Q: Can I make a group or corporate booking?**
+A: Yes, we support group and corporate bookings. Please specify the number of rooms and guests.
 
----
+**Q: What payment options are available?**
+A: We accept credit/debit cards, UPI, digital wallets, and corporate billing for registered clients.
 
-## Flight Status & Check-In
-
-**Q: How can I check the status of my flight?**  
-A: Ask the agent with your flight number (e.g., AI302) or use the app to check real-time status.
-
-**Q: When can I check in for my flight?**  
-A: Online check-in opens 48 hours before departure and closes 2 hours before departure for domestic flights.
-
-**Q: Do I need to print my boarding pass?**  
-A: No, digital boarding passes are accepted at most airports.
+**Q: Can I book add-ons like spa, pickup, or meals in advance?**
+A: Yes! Let us know your preferences during booking or anytime before check-in.
 
 ---
 
-## Baggage
+## 🛎️ Check-In & Check-Out
 
-**Q: What is the baggage allowance for domestic flights?**  
-A: Most domestic flights allow 15kg of checked baggage and 7kg of cabin baggage.
+**Q: What are the check-in and check-out timings?**
+A: Standard check-in is at 2 PM and check-out is at 11 AM.
 
-**Q: Can I carry a power bank in checked baggage?**  
-A: No, power banks must be carried in cabin baggage only.
+**Q: Can I request early check-in or late check-out?**
+A: Yes, subject to room availability. Extra charges may apply.
 
-**Q: What happens if my baggage is overweight?**  
-A: You will be charged an excess baggage fee at the airport.
+**Q: Do I need to carry ID during check-in?**
+A: Yes, a government-approved photo ID is required for all adult guests.
 
----
-
-## Rescheduling
-
-**Q: Can I reschedule my flight after booking?**  
-A: Yes, flights can be rescheduled for a fee unless you booked a flexible fare.
-
-**Q: How many times can I reschedule a flight?**  
-A: There is no strict limit, but fees may increase with each change.
-
-**Q: Can I change the destination of my ticket?**  
-A: No, destination changes require ticket cancellation and rebooking.
+**Q: Is express check-in/check-out available?**
+A: Absolutely. Ask the assistant to set it up for you in advance.
 
 ---
 
-## Refunds
+## 🛏️ Room Services & Amenities
 
-**Q: How long does it take to receive a refund?**  
-A: Refunds are processed within 5–7 business days.
+**Q: How do I request room service?**
+A: Just say “Order room service” and tell the AI Assistant what you’d like.
 
-**Q: How will I receive my refund?**  
-A: Refunds are issued to the original mode of payment.
+**Q: What amenities are included in my room?**
+A: All rooms include Wi-Fi, air conditioning, TV, toiletries, and daily housekeeping. Premium rooms offer additional perks.
 
-**Q: Can I get a refund on a non-refundable ticket?**  
-A: Non-refundable tickets cannot be refunded unless the airline cancels the flight.
+**Q: Can I request extra towels or pillows?**
+A: Yes, simply ask the assistant and our housekeeping staff will assist you.
 
----
-
-## COVID-19 & Travel Safety
-
-**Q: Are masks mandatory on flights?**  
-A: Masks are currently optional on most flights, unless mandated by local regulations.
-
-**Q: Do I need a COVID-19 test to fly?**  
-A: COVID-19 test requirements depend on your destination. Please check with the airline or travel guidelines.
-
-**Q: Is travel insurance required?**  
-A: It is optional but highly recommended.
+**Q: Are pets allowed in the hotel?**
+A: Only select rooms are pet-friendly. Please confirm during booking.
 
 ---
 
-## Special Assistance
+## 🍽️ Dining & Food
 
-**Q: Can I request a wheelchair at the airport?**  
-A: Yes, wheelchair assistance can be requested during booking or at the airport help desk.
+**Q: What are the restaurant timings?**
+A: Breakfast: 7–10 AM, Lunch: 12–3 PM, Dinner: 7–10:30 PM. Room service is available 24/7.
 
-**Q: Is there support for visually impaired travelers?**  
-A: Yes, we provide escort and boarding assistance. Please notify us in advance.
+**Q: Can I get vegetarian or gluten-free meals?**
+A: Yes, we offer vegetarian, vegan, and allergy-conscious options. Just let us know your dietary needs.
 
----
-
-## Emergency & Contact
-
-**Q: What should I do if I miss my flight?**  
-A: Contact the airline or use the AI Assistant immediately to check options.
-
-**Q: How do I contact customer support?**  
-A: You can call 1800-999-HELP or type “talk to human” to connect to a live agent.
+**Q: Is outside food allowed?**
+A: Outside food is generally discouraged. However, exceptions can be made—please check with reception.
 
 ---
 
-*End of FAQ*
+## 🧘‍♀️ Facilities & Recreation
+
+**Q: What facilities are available at the hotel?**
+A: We offer a fitness center, spa, swimming pool, business lounge, and children’s play area.
+
+**Q: Do I need to book the spa or gym in advance?**
+A: Spa appointments require prior booking. Gym access is free for all guests.
+
+**Q: Are there activities or events in the hotel?**
+A: Yes! We regularly host cultural evenings, live music, and yoga sessions. Ask for the current schedule.
+
+---
+
+## 🚖 Transport & Local Help
+
+**Q: Can I book an airport pickup or drop?**
+A: Yes, airport transfers can be arranged. Just provide your flight details.
+
+**Q: Can I get help with local sightseeing or tours?**
+A: Absolutely. We offer curated local experiences and guided tours. Ask the concierge for recommendations.
+
+**Q: Is parking available at the hotel?**
+A: Yes, we offer complimentary parking for guests.
+
+---
+
+## 🆘 Emergency & Support
+
+**Q: What should I do in case of a medical emergency?**
+A: Contact the front desk or dial “Emergency” via room phone. First aid and medical support are available 24/7.
+
+**Q: How can I talk to a human?**
+A: Just say “Talk to human” and you’ll be connected to a live support executive.
+
+**Q: I lost an item in the hotel. What should I do?**
+A: Contact the lost & found department through the assistant or call the front desk.
+
+---
+
+*End of Hospitality FAQ*
+
+---
