@@ -17,25 +17,15 @@ It is designed to support multiple specialized AI agents, such as the **AI Trave
 *   🗣️ **Multimodal Interfaces:**
     *   **Web:** Interactive chat UI built with **Streamlit**.
     *   **Mobile:** **Twilio WhatsApp bot** for text-based conversations.
-    *   **Voice:** Real-time, voice-based interaction over the phone using **Twilio Voice**.
-*   ⚡ **Low-Latency Offline Voice:** The AICA agent uses local **Whisper** (STT) and **Piper** (TTS) for fast, private, and cost-effective voice processing.
+    *   **Voice Chat:** Offline speech support using Whisper + Piper
 *   💾 **Hybrid Memory System:** Combines a sliding window for short-term context with a **FAISS vector store** for long-term memory recall, ensuring conversations are both coherent and personalized.
 *   📊 **Observability with Langfuse:** Deep integration with Langfuse for tracing, debugging, and analyzing agent performance, latency, and token usage.
 
 ---
 
-## 💡 Agents Overview
-
-| Agent | Description | Channels |
-| :--- | :--- | :--- |
-| ✈️ **ATCA** | AI Travel Companion Agent for flight bookings, itinerary checks, and travel queries. | Streamlit, WhatsApp, CLI |
-| 📞 **AICA** | AI Inquiry Call Agent for handling voice-based queries over the phone. | Twilio Voice |
-
----
-
 ## 🏗️ Architecture
 
-The core of the platform is a stateful graph built with LangGraph that orchestrates the flow of information between different components.
+At the heart of the platform is the `hospitalitybot/` folder, which defines the main LangGraph-based conversational agent and its routing, tools, and memory setup.
 
 ![Architecture Diagram](assets/architecture-diagram.png "High-level architecture of the agent orchestration platform.")
 
@@ -47,15 +37,15 @@ The repository is organized to separate concerns, making it easy to extend and m
 
 ```
 ai_hackathon/
-├── agents/              # LangGraph logic for ATCA and AICA agents
-│   ├── atca/            # Travel chat agent
-│   └── aica/            # Voice-based call agent
+├── hospitalitybot/      # Core LangGraph logic (agent, state, routers, nodes)
+│   ├── graph.py
+│   ├── state.py
+│   ├── nodes.py
+│   ├── routers.py
 ├── apps/                # Entry points for Streamlit, Flask, Twilio
-│   ├── atca_app.py          # Streamlit app for ATCA
-│   ├── aica_app.py          # Streamlit app for AICA (audio file input)
-│   ├── aica_voice_app.py    # Flask+WebSocket server for AICA call flow
-│   ├── twilio_app.py        # WhatsApp webhook
-│   └── dashboard.py         # Langfuse trace viewer
+│   ├── streamlit_app.py # Streamlit app for AICA
+│   ├── twilio_app.py    # WhatsApp webhook
+│   └── dashboard.py     # Langfuse trace viewer
 ├── config/              # Prompt files and environment config
 │   └── prompts/
 ├── workflows/           # Base agent setup, routers, aggregation
@@ -116,26 +106,11 @@ Fill in:
 
 ## 🌟 Running Applications
 
-### 🔗 Web Chat Interface (ATCA)
+### 🔗 Web Chat Interface (Hospitality Bot)
 
 ```bash
-streamlit run apps/atca_app.py
+streamlit run apps/streamlit_app.py
 ```
-
-### 📆 AICA Test Interface (Streamlit)
-
-```bash
-streamlit run apps/aica_app.py
-```
-
-### 📞 AICA Voice Agent (Phone Calls)
-
-```bash
-python apps/aica_voice_app.py
-ngrok http 5000  # Then paste the ngrok URL in Twilio
-```
-
-Set Twilio webhook to: `https://<your-ngrok-id>.ngrok.io/voice`
 
 ### 📲 WhatsApp Integration
 
