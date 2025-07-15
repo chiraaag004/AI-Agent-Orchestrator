@@ -1,4 +1,4 @@
-# d:\Work\ai_hackathon\agents\hospitalitybot\state.py
+# d:\Work\ai_hackathon\hospitalitybot\state.py
 from typing import TypedDict, List, Optional
 from langchain_core.messages import BaseMessage
 from langchain.memory import VectorStoreRetrieverMemory

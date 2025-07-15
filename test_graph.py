@@ -6,7 +6,7 @@ from pprint import pprint
 # when run from the root 'ai_hackathon' directory.
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
-from agents.atca.graph import travel_graph
+from hospitalitybot.graph import travel_graph
 from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
 from workflows.language_helpers import detect_language, translate_text
 from langfuse import get_client

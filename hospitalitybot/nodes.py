@@ -1,4 +1,4 @@
-# agents/hospitalitybot/nodes.py
+# hospitalitybot/nodes.py
 from .state import AgentState
 from workflows.base_agent import ReActAgent
 from workflows.action_tool_registry import TOOL_MAP

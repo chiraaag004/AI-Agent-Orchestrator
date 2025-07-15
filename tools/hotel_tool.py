@@ -87,6 +87,7 @@ def hotel_faq_tool(keyword: str) -> str:
 
 @tool(args_schema=GetHotelInfoInput)
 def get_hotel_info_tool(information_type):
+    """Provides specific hotel information such as pool hours, gym, breakfast, or check-in/out times."""
     if "pool" in information_type and "hours" in information_type:
         return "🏊 Pool hours: 6 AM – 10 PM."
     elif "gym" in information_type:
@@ -99,8 +100,10 @@ def get_hotel_info_tool(information_type):
         return "Check-out time: 11:00 AM."
     return "Information type not found. Try asking about pool, gym, or breakfast."
 
+
 @tool(args_schema=GetRoomDetailsInput)
 def get_room_details_tool(guest_name, room_number):
+    """Fetches room details such as type, view, and amenities for a specific guest and room number."""
     try:
         df = pd.read_csv("data/rooms.csv")
         room = df[df["room_number"] == room_number].iloc[0]
@@ -112,3 +115,4 @@ def get_room_details_tool(guest_name, room_number):
         )
     except Exception:
         return f"Room details for {room_number} not found."
+

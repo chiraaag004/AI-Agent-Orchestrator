@@ -1,4 +1,4 @@
-# agents/hospitalitybot/routers.py
+# hospitalitybot/routers.py
 from .state import AgentState
 
 def initial_router(state: AgentState) -> str:

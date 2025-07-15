@@ -1,5 +1,5 @@
 # workflows/formatter.py
-from agents.atca.state import AgentState
+from hospitalitybot.state import AgentState
 from langchain_core.messages import AIMessage
 
 def format_output(state: AgentState) -> dict:
