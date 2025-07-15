@@ -2,9 +2,9 @@
 
 ![LangGraph](https://img.shields.io/badge/LangGraph-Framework-blue) ![LangChain](https://img.shields.io/badge/LangChain-Integration-green) ![Streamlit](https://img.shields.io/badge/Streamlit-UI-red) ![Flask](https://img.shields.io/badge/Flask-API-black) ![Twilio](https://img.shields.io/badge/Twilio-Voice/SMS-red)
 
-> A modular, multi-agent AI orchestration framework for building sophisticated conversational AI applications. This platform integrates text and voice channels, enabling seamless interaction via chat, WhatsApp, and phone calls.
+> A modular, tool-augmented AI orchestration platform for sophisticated hospitality-focused conversations. Built with LangGraph, it supports rich interactions across web, WhatsApp, and voice.
 
-It is designed to support multiple specialized AI agents, such as the **AI Travel Companion Agent (ATCA)** and the **AI Inquiry Call Agent (AICA)**. The system uses **intent routing**, **tool-enhanced agents**, **multi-LLM support**, and a **hybrid memory system** to deliver contextual, multimodal conversations.
+The project centralizes all orchestration logic in the **hospitalitybot** agent, replacing the previous multi-agent structure. It enables seamless communication using text and voice, powered by **intent-based routing**, **multi-modal tools**, and **long-term memory**.
 
 ---
 
@@ -43,7 +43,7 @@ ai_hackathon/
 │   ├── nodes.py
 │   ├── routers.py
 ├── apps/                # Entry points for Streamlit, Flask, Twilio
-│   ├── streamlit_app.py # Streamlit app for AICA
+│   ├── streamlit_app.py # Streamlit app
 │   ├── twilio_app.py    # WhatsApp webhook
 │   └── dashboard.py     # Langfuse trace viewer
 ├── config/              # Prompt files and environment config
@@ -149,7 +149,7 @@ python test_graph.py
 
 ---
 
-## 🔊 Voice Processing (AICA)
+## 🔊 Voice Processing
 
 * **STT (Speech-to-Text):** Whisper (offline)
 * **TTS (Text-to-Speech):** Piper (offline)
