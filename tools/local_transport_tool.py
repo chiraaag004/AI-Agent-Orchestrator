@@ -1,9 +1,22 @@
-from langchain.tools import tool
-from pydantic import BaseModel, Field
+import os
+import csv
+import random
 import pandas as pd
 from datetime import datetime
-import random
-import os
+from langchain.tools import tool
+from pydantic import BaseModel, Field
+
+# --- Data Directory ---
+DATA_DIR = "data"
+os.makedirs(DATA_DIR, exist_ok=True)
+
+def safe_append_to_csv(file_path, row_dict, fieldnames):
+    file_exists = os.path.exists(file_path)
+    with open(file_path, mode='a', newline='', encoding='utf-8') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames, quoting=csv.QUOTE_ALL)
+        if not file_exists:
+            writer.writeheader()
+        writer.writerow(row_dict)
 
 # --- Informational Tool ---
 
@@ -16,7 +29,7 @@ class LocalTransportInput(BaseModel):
 def local_transport_tool(location: str, transport_type: str) -> str:
     """Provides local transport options from mock data."""
     try:
-        df = pd.read_csv("data/local_transport.csv")
+        df = pd.read_csv(os.path.join(DATA_DIR, "local_transport.csv"))
     except FileNotFoundError:
         return "📂 local_transport.csv not found."
 
@@ -45,11 +58,10 @@ class BookTransportInput(BaseModel):
 @tool(args_schema=BookTransportInput)
 def book_local_transport_tool(guest_name: str, transport_type: str, pickup_time: str, destination: str) -> str:
     """Books local transport for a guest and logs the booking in CSV."""
-
-    booking_id = "TRN-" + "".join([str(random.randint(0, 9)) for _ in range(6)])
+    booking_id = "TRN-" + "".join(str(random.randint(0, 9)) for _ in range(6))
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    booking = {
+    row = {
         "Timestamp": timestamp,
         "Booking ID": booking_id,
         "Guest Name": guest_name,
@@ -58,16 +70,8 @@ def book_local_transport_tool(guest_name: str, transport_type: str, pickup_time:
         "Destination": destination
     }
 
-    # Ensure directory exists
-    os.makedirs("data", exist_ok=True)
-    csv_path = "data/transport_bookings.csv"
-
-    # Append booking to CSV
-    df = pd.DataFrame([booking])
-    if os.path.exists(csv_path):
-        df.to_csv(csv_path, mode='a', header=False, index=False)
-    else:
-        df.to_csv(csv_path, index=False)
+    csv_path = os.path.join(DATA_DIR, "transport_bookings.csv")
+    safe_append_to_csv(csv_path, row, fieldnames=row.keys())
 
     return (
         f"✅ Transport booked for {guest_name}:\n"
@@ -76,4 +80,3 @@ def book_local_transport_tool(guest_name: str, transport_type: str, pickup_time:
         f"- Destination: {destination}\n"
         f"- Booking ID: {booking_id}"
     )
-

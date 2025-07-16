@@ -3,8 +3,10 @@ from langchain.tools import tool
 from pydantic import BaseModel, Field
 from typing import List
 import random
-import json
 import pandas as pd
+import csv
+
+# ----------------- Input Schemas -----------------
 
 class BookRoomInput(BaseModel):
     guest_name: str = Field(description="Name of the guest making the reservation.")
@@ -27,28 +29,34 @@ class GetRoomDetailsInput(BaseModel):
     guest_name: str = Field(description="Name of the guest.")
     room_number: int = Field(description="Room number of the guest.")
 
+# ----------------- Setup -----------------
+
 DATA_DIR = "data"
 os.makedirs(DATA_DIR, exist_ok=True)
 
-# --- Tool Functions ---
+def safe_append_csv(data: dict, file_path: str, fieldnames: List[str]):
+    file_exists = os.path.isfile(file_path)
+    with open(file_path, mode="a", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames, quoting=csv.QUOTE_ALL)
+        if not file_exists:
+            writer.writeheader()
+        writer.writerow(data)
+
+# ----------------- Tools -----------------
 
 @tool(args_schema=BookRoomInput)
 def book_room_tool(guest_name: str, room_type: str, check_in_date: str, check_out_date: str) -> str:
     """Simulates booking a hotel room. Logs the booking to bookings.csv."""
     confirmation_number = "HCN-" + "".join([str(x) for x in random.sample(range(10), 6)])
-    df = pd.DataFrame([{
+    data = {
         "confirmation_number": confirmation_number,
         "guest_name": guest_name,
         "room_type": room_type,
         "check_in_date": check_in_date,
         "check_out_date": check_out_date
-    }])
-
+    }
     bookings_file = os.path.join(DATA_DIR, "bookings.csv")
-    if os.path.exists(bookings_file):
-        df.to_csv(bookings_file, mode="a", header=False, index=False)
-    else:
-        df.to_csv(bookings_file, index=False)
+    safe_append_csv(data, bookings_file, list(data.keys()))
 
     return f"✅ Room booked for {guest_name}: {room_type} from {check_in_date} to {check_out_date}.\nConfirmation number: {confirmation_number}"
 
@@ -56,18 +64,14 @@ def book_room_tool(guest_name: str, room_type: str, check_in_date: str, check_ou
 def room_service_tool(guest_name: str, items: List[str], delivery_time: str) -> str:
     """Simulates requesting room service and logs it to room_service.csv."""
     items_str = ", ".join(items)
-    df = pd.DataFrame([{
+    data = {
         "guest_name": guest_name,
-        "items": str(items),
+        "items": items_str,
         "delivery_time": delivery_time,
         "status": "In Progress"
-    }])
-
+    }
     service_file = os.path.join(DATA_DIR, "room_service.csv")
-    if os.path.exists(service_file):
-        df.to_csv(service_file, mode="a", header=False, index=False)
-    else:
-        df.to_csv(service_file, index=False)
+    safe_append_csv(data, service_file, list(data.keys()))
 
     return f"🛎️ Room service requested by {guest_name}:\n- Items: {items_str}\n- Delivery at: {delivery_time}\nYour order will arrive shortly."
 
@@ -84,28 +88,27 @@ def hotel_faq_tool(keyword: str) -> str:
         return result.iloc[0]["answer"]
     return "❌ Could not find an FAQ matching your keyword. Please try a related term."
 
-
 @tool(args_schema=GetHotelInfoInput)
-def get_hotel_info_tool(information_type):
+def get_hotel_info_tool(information_type: str) -> str:
     """Provides specific hotel information such as pool hours, gym, breakfast, or check-in/out times."""
-    if "pool" in information_type and "hours" in information_type:
+    it = information_type.lower()
+    if "pool" in it and "hour" in it:
         return "🏊 Pool hours: 6 AM – 10 PM."
-    elif "gym" in information_type:
+    elif "gym" in it:
         return "💪 Gym is on 3rd floor. Open 24/7."
-    elif "breakfast" in information_type:
+    elif "breakfast" in it:
         return "🍳 Breakfast: 7 AM – 10 AM in dining hall."
-    elif "check-in" in information_type:
+    elif "check-in" in it:
         return "Check-in time: 3:00 PM."
-    elif "check-out" in information_type:
+    elif "check-out" in it:
         return "Check-out time: 11:00 AM."
     return "Information type not found. Try asking about pool, gym, or breakfast."
 
-
 @tool(args_schema=GetRoomDetailsInput)
-def get_room_details_tool(guest_name, room_number):
+def get_room_details_tool(guest_name: str, room_number: int) -> str:
     """Fetches room details such as type, view, and amenities for a specific guest and room number."""
     try:
-        df = pd.read_csv("data/rooms.csv")
+        df = pd.read_csv(os.path.join(DATA_DIR, "rooms.csv"))
         room = df[df["room_number"] == room_number].iloc[0]
         return (
             f"Room {room_number} for {guest_name}:\n"
@@ -115,4 +118,3 @@ def get_room_details_tool(guest_name, room_number):
         )
     except Exception:
         return f"Room details for {room_number} not found."
-

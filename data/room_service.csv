@@ -1,4 +1,4 @@
 guest_name,items,delivery_time,status
-Alice,"towels, water",09:30,delivered
-Bob,"pizza, soda",21:00,preparing
-Charlie,"coffee",07:45,delivered
+Alice Smith,"['water', 'towels']",14:30,Delivered
+Bob Johnson,"['pizza', 'coke']",18:45,In Progress
+Carla Ruiz,"['blanket', 'tea']",21:00,Delivered

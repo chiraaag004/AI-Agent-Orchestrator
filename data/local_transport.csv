@@ -1,0 +1,6 @@
+location,transport_type,name,description
+Grand Palace,taxi,City Cabs,"24/7 taxi service, average wait time 5 minutes"
+Grand Palace,metro,Green Line,"Metro station 300m away, trains every 10 minutes"
+Grand Palace,bus,Route 27,"Stops in front of the hotel, runs 6 AM to 11 PM"
+Ocean View,taxi,QuickRide,"Affordable and fast service across town"
+Ocean View,bus,Route 88,"Connects to downtown every 15 minutes"

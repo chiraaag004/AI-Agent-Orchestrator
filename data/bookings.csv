@@ -1,6 +1,4 @@
-booking_id,guest_name,room_type,check_in,check_out
-HCN-123456,Alice,suite,2025-07-12,2025-07-14
-HCN-153457,Bob,double,2025-07-13,2025-07-16
-HCN-126458,Charlie,single,2025-07-10,2025-07-12
-HCN-123789,David,suite,2025-07-15,2025-07-18
-HCN-157809,XYZ,deluxe,2025-09-25,2025-09-27
+confirmation_number,guest_name,room_type,check_in_date,check_out_date
+HCN-928173,Alice Smith,double,2025-07-15,2025-07-18
+HCN-271849,Bob Johnson,suite,2025-07-16,2025-07-20
+HCN-563102,Carla Ruiz,single,2025-07-14,2025-07-17

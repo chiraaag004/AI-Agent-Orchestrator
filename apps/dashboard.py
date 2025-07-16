@@ -149,28 +149,37 @@ def render_dashboard(traces):
         st.markdown(f"**Latency:** {selected['Latency (s)']} seconds")
         st.markdown(f"[🔗 View Full Trace in Langfuse]({selected['Trace URL']})")
 
-        with tab4:
-            st.markdown("## 📝 Bookings Overview")
+    with tab4:
+        st.markdown("## 📝 Bookings Overview")
 
-            table_options = {
-                "Room Bookings": "data/bookings.csv",
-                "Room Service Orders": "data/room_service.csv",
-                "Transport Bookings": "data/transport_bookings.csv"
-            }
+        table_options = {
+            "Room Bookings": "data/bookings.csv",
+            "Room Service Orders": "data/room_service.csv",
+            "Transport Bookings": "data/transport_bookings.csv"
+        }
 
-            selected_table = st.selectbox("Select Booking Table", options=list(table_options.keys()))
+        selected_table = st.selectbox("Select Booking Table", options=list(table_options.keys()))
 
-            try:
-                df_table = pd.read_csv(table_options[selected_table])
-                st.markdown(f"### 📄 {selected_table}")
-                st.dataframe(df_table, use_container_width=True, hide_index=True)
-                st.metric(f"{selected_table}", len(df_table))
-            except FileNotFoundError:
-                st.error(f"❌ File not found: {table_options[selected_table]}")
-            except Exception as e:
-                st.error(f"⚠️ Error loading data: {e}")
+        try:
+            file_path = table_options[selected_table]
+            df_table = pd.read_csv(file_path, dtype=str, on_bad_lines='skip')  # Read everything as string for safety
 
+            # Attempt to safely evaluate 'items' column for room service
+            if selected_table == "Room Service Orders" and "items" in df_table.columns:
+                try:
+                    import ast
+                    df_table["items"] = df_table["items"].apply(lambda x: ", ".join(ast.literal_eval(x)) if pd.notna(x) else "")
+                except Exception as e:
+                    st.warning(f"Could not parse items column: {e}")
 
+            st.markdown(f"### 📄 {selected_table}")
+            st.dataframe(df_table, use_container_width=True, hide_index=True)
+            st.metric(f"{selected_table}", len(df_table))
+
+        except FileNotFoundError:
+            st.error(f"❌ File not found: {table_options[selected_table]}")
+        except Exception as e:
+            st.error(f"⚠️ Error loading data: {e}")
 
 # Run app
 traces = get_traces()
