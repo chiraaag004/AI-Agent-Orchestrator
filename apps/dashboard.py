@@ -16,8 +16,6 @@ st.set_page_config(
 # Automatically refresh every 10 seconds
 st_autorefresh(interval=10000, key="datarefresh")
 
-
-
 try:
     langfuse_client = get_client()
 except Exception as e:

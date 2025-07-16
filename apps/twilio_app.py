@@ -17,7 +17,7 @@ from hospitalitybot.graph import hospitality_graph
 from langchain_core.messages import HumanMessage, AIMessage
 from workflows.language_helpers import detect_language, translate_text
 from utils.memory_setup import create_long_term_memory
-from config.settings import CONVERSATION_WINDOW_SIZE
+from config.settings import CONVERSATION_WINDOW_SIZE, TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN
 from utils.voice_services import SpeechToTextManager, TextToSpeechManager
 from langfuse import get_client
 from langfuse.langchain import CallbackHandler
@@ -81,22 +81,15 @@ def sms_reply():
         # 1. Handle input (voice or text)
         if media_url and media_url.startswith("https://"):
             print(f"Audio message received from {from_number}")
-            audio_response = requests.get(media_url)
+            audio_response = requests.get(media_url, auth=(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN))
 
-            # For debugging, save the incoming audio file to a 'debug_audio' directory.
-            # This helps verify the audio quality being received from Twilio.
-            if not os.path.exists("debug_audio"):
-                os.makedirs("debug_audio")
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            content_type = audio_response.headers.get('Content-Type', 'application/octet-stream')
-            extension = mimetypes.guess_extension(content_type) or '.audio'
-            debug_filename = f"debug_audio/received_{from_number.replace('+', '')}_{timestamp}{extension}"
-            with open(debug_filename, 'wb') as f:
-                f.write(audio_response.content)
-            print(f"Saved incoming audio for debugging to: {debug_filename}")
+            content_type = audio_response.headers.get("Content-Type")  # e.g., 'audio/ogg'
+            extension = mimetypes.guess_extension(content_type)
+            if not extension:
+                extension = ".wav"
 
             audio_content = io.BytesIO(audio_response.content)
-            user_query = stt_manager.transcribe_audio(audio_content.read())
+            user_query = stt_manager.transcribe_audio(audio_content.read(), suffix=extension)
             prompt = user_query or "I sent an audio message that couldn't be transcribed."
         else:
             prompt = text_message or "No message received."

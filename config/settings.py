@@ -62,3 +62,7 @@ ROUTER_INTENTS = list(AGENT_TOOL_MAPPING.keys())
 # Agent Memory settings
 conversation_window_str = os.getenv("CONVERSATION_WINDOW_SIZE", "6")
 CONVERSATION_WINDOW_SIZE = int(conversation_window_str.split('#')[0].strip())
+
+TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
+TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
+TWILIO_PHONE_NUMBER = os.getenv("TWILIO_PHONE_NUMBER")
