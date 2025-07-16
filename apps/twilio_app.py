@@ -12,7 +12,6 @@ import requests
 # Project path configuration
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-
 # Custom imports
 from hospitalitybot.graph import hospitality_graph
 from langchain_core.messages import HumanMessage, AIMessage
