@@ -18,6 +18,8 @@ from workflows.language_helpers import detect_language, translate_text
 from utils.memory_setup import create_long_term_memory
 from config.settings import CONVERSATION_WINDOW_SIZE
 from utils.voice_services import SpeechToTextManager, TextToSpeechManager
+from langfuse import get_client
+from langfuse.langchain import CallbackHandler
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
 # Load environment variables
@@ -25,6 +27,16 @@ load_dotenv()
 
 # Flask app
 app = Flask(__name__)
+
+# --- Langfuse Configuration ---
+try:
+    # Check if Langfuse can be initialized.
+    get_client()
+    langfuse_enabled = True
+    print("✅ Langfuse is configured and enabled.")
+except Exception as e:
+    langfuse_enabled = False
+    print(f"⚠️ Langfuse not configured, integration will be disabled. Error: {e}")
 
 # Speech modules
 stt_manager = SpeechToTextManager()
@@ -95,7 +107,12 @@ def sms_reply():
         }
 
         # 4. Invoke graph
-        result = hospitality_graph.invoke(graph_input)
+        config = {}
+        if langfuse_enabled:
+            # Pass a new handler for each trace to ensure proper context
+            config["callbacks"] = [CallbackHandler()]
+
+        result = hospitality_graph.invoke(graph_input, config=config)
 
         if result.get("messages") and isinstance(result["messages"][-1], AIMessage):
             new_ai_message = result["messages"][-1]
