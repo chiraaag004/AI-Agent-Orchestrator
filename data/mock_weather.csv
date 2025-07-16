@@ -1,0 +1,10 @@
+city,date,temperature,condition,humidity
+Delhi,2025-07-15,35°C,Sunny,40%
+Delhi,2025-07-16,34°C,Cloudy,45%
+Delhi,2025-07-17,33°C,Rainy,70%
+Mumbai,2025-07-15,30°C,Rainy,85%
+Mumbai,2025-07-16,31°C,Cloudy,75%
+Mumbai,2025-07-17,32°C,Sunny,60%
+Bangalore,2025-07-15,28°C,Sunny,50%
+Bangalore,2025-07-16,27°C,Rainy,80%
+Bangalore,2025-07-17,26°C,Cloudy,65%
