@@ -4,6 +4,9 @@ from config.settings import CONFIDENCE_THRESHOLD, ROUTER_INTENTS
 import json
 import os
 import re
+from config.settings import CONVERSATION_WINDOW_SIZE
+from langchain_core.messages import BaseMessage, HumanMessage, AIMessage
+from typing import List
 import logging
 
 PROMPT_PATH = "config/prompts/router_prompt.txt"
@@ -16,6 +19,7 @@ def load_prompt():
 prompt = load_prompt()
 llm = load_llm()
 
+
 def route_intent(state: dict) -> dict:
     """
     Routes the user input to the correct workflow based on intent classification.
@@ -26,13 +30,18 @@ def route_intent(state: dict) -> dict:
     Returns:
         dict: The updated state with 'intent' and 'confidence' keys.
     """
-    messages = state.get("messages", [])
+    messages = state["messages"][-CONVERSATION_WINDOW_SIZE:]
     if not messages:
         # Should not happen in a normal flow, but good practice to handle
         return {"intents": ["general"], "confidence": 0, "processed_intents": [], "aggregated_output": ""}
     user_input = messages[-1].content
+
+    chat_history = "\n".join([f"{msg.type}: {msg.content}" for msg in messages[:-1]])
+
     try:
-        formatted_prompt = prompt.format(intents=json.dumps(ROUTER_INTENTS), input=user_input)
+        formatted_prompt = prompt.format(
+            intents=json.dumps(ROUTER_INTENTS), chat_history=chat_history, input=user_input
+        )
         raw_response = llm.invoke(formatted_prompt).content
 
         # Use a regular expression to extract the JSON object from the LLM's response.

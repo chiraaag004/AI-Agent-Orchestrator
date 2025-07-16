@@ -55,7 +55,7 @@ def create_agent_runner(agent_name: str, tool_names: list[str] = None):
         # 2. Load relevant long-term memories if the memory object exists and is valid.
         if memory and hasattr(memory, "retriever"):
             try:
-                query_for_retrieval = state.get("original_query", "") + " ".join(msg.content for msg in clean_history)
+                query_for_retrieval = state.get("original_query", "") + " ".join(msg.content for msg in clean_history[:-1])
                 retrieved_docs = memory.retriever.invoke(query_for_retrieval)
                 if retrieved_docs:
                     retrieved_memory_str = (
@@ -72,7 +72,7 @@ def create_agent_runner(agent_name: str, tool_names: list[str] = None):
             retrieved_memory_str = ""
 
         # 3. Prepare the tools and prompt for the agent.
-        history_str = "\n".join([f"{msg.type}: {msg.content}" for msg in clean_history])
+        history_str = "\n".join([f"{msg.type}: {msg.content}" for msg in clean_history[:-1]])
         
         if tool_names is not None:
             tools_for_agent = {name: TOOL_MAP[name] for name in tool_names if name in TOOL_MAP}
