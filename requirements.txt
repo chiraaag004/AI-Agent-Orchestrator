@@ -30,3 +30,4 @@ piper-tts
 flask-sock
 gevent-websocket
 plotly
+streamlit-autorefresh
