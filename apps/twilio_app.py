@@ -46,12 +46,19 @@ user_sessions = {}
 def get_or_create_session(session_id: str):
     if session_id not in user_sessions:
         print(f"Creating new session for {session_id}")
+        
+        long_term_memory = None  # default fallback
+
         try:
-            embedding_model_name = os.getenv("EMBEDDING_MODEL_NAME", "models/embedding-001")
-            embedding_model = GoogleGenerativeAIEmbeddings(model=embedding_model_name)
-            long_term_memory = create_long_term_memory(embedding_model)
+            # Only attempt embedding setup if explicitly allowed
+            if os.getenv("ENABLE_EMBEDDINGS", "false").lower() == "true":
+                embedding_model_name = os.getenv("EMBEDDING_MODEL_NAME", "models/embedding-001")
+                embedding_model = GoogleGenerativeAIEmbeddings(model=embedding_model_name)
+                long_term_memory = create_long_term_memory(embedding_model)
+            else:
+                print("🛑 Embeddings disabled via ENV. Skipping memory setup.")
         except Exception as e:
-            print(f"Fatal Error initializing memory for {session_id}: {e}")
+            print(f"⚠️ Could not initialize memory: {e}")
             long_term_memory = None
 
         user_sessions[session_id] = {
@@ -61,7 +68,9 @@ def get_or_create_session(session_id: str):
             },
             "long_term_memory": long_term_memory,
         }
+
     return user_sessions[session_id]
+
 
 @app.route("/sms", methods=['POST'])
 def sms_reply():
