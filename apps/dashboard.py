@@ -7,6 +7,7 @@ import time
 from datetime import datetime
 from streamlit_autorefresh import st_autorefresh
 
+
 st.set_page_config(
     page_title="Agent Admin Dashboard",
     page_icon="📊",
@@ -148,6 +149,7 @@ def render_dashboard(traces):
         st.markdown(f"[🔗 View Full Trace in Langfuse]({selected['Trace URL']})")
 
     with tab4:
+      with tab4:
         st.markdown("## 📝 Bookings Overview")
 
         table_options = {
@@ -157,25 +159,48 @@ def render_dashboard(traces):
         }
 
         selected_table = st.selectbox("Select Booking Table", options=list(table_options.keys()))
+        file_path = table_options[selected_table]
 
         try:
-            file_path = table_options[selected_table]
-            df_table = pd.read_csv(file_path, dtype=str, on_bad_lines='skip')  # Read everything as string for safety
+            df_table = pd.read_csv(file_path, dtype=str, on_bad_lines='skip')  # Read all as string for editing
 
-            # Attempt to safely evaluate 'items' column for room service
+            # Parse 'items' column for Room Service Orders
             if selected_table == "Room Service Orders" and "items" in df_table.columns:
-                try:
-                    import ast
-                    df_table["items"] = df_table["items"].apply(lambda x: ", ".join(ast.literal_eval(x)) if pd.notna(x) else "")
-                except Exception as e:
-                    st.warning(f"Could not parse items column: {e}")
+                import ast
+                df_table["items"] = df_table["items"].apply(lambda x: ", ".join(ast.literal_eval(x)) if pd.notna(x) else "")
 
-            st.markdown(f"### 📄 {selected_table}")
-            st.dataframe(df_table, use_container_width=True, hide_index=True)
-            st.metric(f"{selected_table}", len(df_table))
+            st.markdown(f"### 📄 {selected_table} (Editable)")
+
+            # If 'status' column exists, enable filtering and editing
+            if "status" in df_table.columns:
+                # Filter
+                unique_statuses = df_table["status"].dropna().unique().tolist()
+                selected_statuses = st.multiselect("Filter by Status", unique_statuses, default=unique_statuses)
+                df_table = df_table[df_table["status"].isin(selected_statuses)]
+
+                st.markdown("🖋️ **Edit Status or Sort Any Column Below**")
+
+            # Sortable and editable table
+            edited_df = st.data_editor(
+                df_table,
+                use_container_width=True,
+                num_rows="dynamic",
+                hide_index=True,
+                key="editable_table",
+            )
+
+            st.metric(f"{selected_table}", len(edited_df))
+
+            if st.button("💾 Save Changes"):
+                try:
+                    # Save back to CSV (overwriting original)
+                    edited_df.to_csv(file_path, index=False)
+                    st.success("✅ Changes saved successfully.")
+                except Exception as e:
+                    st.error(f"❌ Failed to save changes: {e}")
 
         except FileNotFoundError:
-            st.error(f"❌ File not found: {table_options[selected_table]}")
+            st.error(f"❌ File not found: {file_path}")
         except Exception as e:
             st.error(f"⚠️ Error loading data: {e}")
 
