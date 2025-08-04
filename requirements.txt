@@ -37,4 +37,5 @@ sentence-transformers
 torch
 
 #others
-unstructured
+gunicorn
+unstructured[all-docs]
