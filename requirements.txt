@@ -1,33 +1,36 @@
-# Core LangChain and LangGraph libraries
+# LangChain and LangGraph Core
 langchain
 langchain-core
 langgraph
 
-# LLM Provider Integrations
+# LLMs
 langchain-google-genai
 langchain-openai
 langchain-anthropic
 
-# Observability and Tracing
+# Observability
 langfuse
 
-# Dashboard and Data Handling
+# Web UI and Data
 streamlit
+streamlit-autorefresh
 pandas
+plotly
 
-# Environment variable management
+# Flask and WebSocket
+flask
+flask-sock
+gevent-websocket
+
+# Env management
 python-dotenv
 
-# For Long-Term Memory
-faiss-cpu
-sentence-transformers
-torch
-
-flask
+# Whisper + TTS + Inference
 openai-whisper
 onnxruntime
 piper-tts
-flask-sock
-gevent-websocket
-plotly
-streamlit-autorefresh
+
+# Memory / Embeddings
+faiss-cpu
+sentence-transformers
+torch
