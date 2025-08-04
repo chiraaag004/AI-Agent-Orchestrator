@@ -2,6 +2,7 @@
 langchain
 langchain-core
 langgraph
+langchain-community
 
 # LLMs
 langchain-google-genai
