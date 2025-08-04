@@ -143,4 +143,5 @@ def sms_reply():
 
 if __name__ == "__main__":
     print("🚀 Starting Twilio Hospitality Bot Server...")
-    app.run(debug=True, use_reloader=False, port=5000)
+    port = int(os.environ.get("PORT", 5000))  # fallback for local
+    app.run(host="0.0.0.0", port=port)
