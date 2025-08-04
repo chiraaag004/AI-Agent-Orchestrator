@@ -40,3 +40,4 @@ torch
 gunicorn
 unstructured[all-docs]
 nest-asyncio
+twilio
