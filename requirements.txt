@@ -27,9 +27,9 @@ gevent-websocket
 python-dotenv
 
 # Whisper + TTS + Inference
-openai-whisper
-onnxruntime
-piper-tts
+# openai-whisper
+# onnxruntime
+# piper-tts
 
 # Memory / Embeddings
 faiss-cpu
