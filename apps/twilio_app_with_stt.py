@@ -18,6 +18,7 @@ from langchain_core.messages import HumanMessage, AIMessage
 from workflows.language_helpers import detect_language, translate_text
 from utils.memory_setup import create_long_term_memory
 from config.settings import CONVERSATION_WINDOW_SIZE, TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN
+from utils.voice_services import SpeechToTextManager, TextToSpeechManager
 from langfuse import get_client
 from langfuse.langchain import CallbackHandler
 from flask import send_file
@@ -39,6 +40,9 @@ except Exception as e:
     langfuse_enabled = False
     print(f"⚠️ Langfuse not configured, integration will be disabled. Error: {e}")
 
+# Speech modules
+stt_manager = SpeechToTextManager()
+tts_manager = TextToSpeechManager()
 
 # In-memory session store (replace with Redis/db for prod)
 user_sessions = {}
@@ -67,14 +71,29 @@ def get_or_create_session(session_id: str):
 def sms_reply():
     from_number = request.values.get("From", None)
     text_message = request.values.get("Body", None)
+    media_url = request.values.get("MediaUrl0", None)
 
     session = get_or_create_session(from_number)
     graph_state = session["graph_state"]
     long_term_memory = session["long_term_memory"]
 
     try:
-        # 1. Get user text
-        prompt = text_message or "No message received."
+        # 1. Handle input (voice or text)
+        if media_url and media_url.startswith("https://"):
+            print(f"Audio message received from {from_number}")
+            audio_response = requests.get(media_url, auth=(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN))
+
+            content_type = audio_response.headers.get("Content-Type")  # e.g., 'audio/ogg'
+            extension = mimetypes.guess_extension(content_type)
+            if not extension:
+                extension = ".wav"
+
+            audio_content = io.BytesIO(audio_response.content)
+            user_query = stt_manager.transcribe_audio(audio_content.read(), suffix=extension)
+            prompt = user_query or "I sent an audio message that couldn't be transcribed."
+        else:
+            prompt = text_message or "No message received."
+
         print(f"User Query from {from_number}: {prompt}")
 
         # 2. Detect language
@@ -98,6 +117,7 @@ def sms_reply():
         # 4. Invoke graph
         config = {}
         if langfuse_enabled:
+            # Pass a new handler for each trace to ensure proper context
             config["callbacks"] = [CallbackHandler()]
 
         result = hospitality_graph.invoke(graph_input, config=config)
@@ -112,15 +132,14 @@ def sms_reply():
         else:
             display_response = "Sorry, I couldn't generate a response."
 
-    except Exception as e:
-        print(f"Error processing message from {from_number}: {e}")
+    except Exception as e:  # Catching general exceptions
+        print(f"Error processing message from {from_number}: {e}")  # Log the error with user's number
         display_response = "Sorry, there was an error processing your message."
 
-    # Twilio text-only reply
+    # Send Twilio response (text only)
     twilio_response = MessagingResponse()
-    twilio_response.message(display_response)
+    twilio_response.message(display_response)  # Always send a text message
     return str(twilio_response)
-
 
 if __name__ == "__main__":
     print("🚀 Starting Twilio Hospitality Bot Server...")
