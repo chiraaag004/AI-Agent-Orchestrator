@@ -39,3 +39,4 @@ torch
 #others
 gunicorn
 unstructured[all-docs]
+nest-asyncio

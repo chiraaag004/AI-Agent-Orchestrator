@@ -8,6 +8,17 @@ from dotenv import load_dotenv
 # This ensures that the script can find the other modules in the project
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
+import asyncio
+import nest_asyncio
+
+try:
+    asyncio.get_event_loop()
+except RuntimeError:
+    asyncio.set_event_loop(asyncio.new_event_loop())
+
+nest_asyncio.apply()
+
+
 from hospitalitybot.graph import hospitality_graph
 from langchain_core.messages import HumanMessage, AIMessage
 from workflows.language_helpers import detect_language, translate_text
