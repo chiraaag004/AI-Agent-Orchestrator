@@ -35,3 +35,6 @@ piper-tts
 faiss-cpu
 sentence-transformers
 torch
+
+#others
+unstructured
