@@ -6,6 +6,7 @@ import plotly.express as px
 import time
 from datetime import datetime
 from streamlit_autorefresh import st_autorefresh
+from importlib.metadata import version, PackageNotFoundError
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -63,7 +64,13 @@ def render_dashboard(traces):
 
     # Sidebar Filters
     st.sidebar.header("🔍 Filters")
-    st.sidebar.info(f"Langfuse v{langfuse_module.__version__}")
+
+    try:
+        langfuse_version = version("langfuse")
+    except PackageNotFoundError:
+        langfuse_version = "not installed"
+
+    st.sidebar.info(f"Langfuse v{langfuse_version}")
     st.sidebar.markdown(f"🕒 Last Sync: {datetime.now().strftime('%H:%M:%S')}")
 
     lang_options = ["All"] + sorted(df["Language"].dropna().unique().tolist())
