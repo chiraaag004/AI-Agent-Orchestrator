@@ -5,6 +5,7 @@ import pandas as pd
 from io import StringIO
 from dotenv import load_dotenv
 
+load_dotenv()
 # This ensures that the script can find the other modules in the project
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
@@ -27,9 +28,6 @@ from langfuse.langchain import CallbackHandler
 from utils.memory_setup import create_long_term_memory
 from config.settings import CONVERSATION_WINDOW_SIZE
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
-
-# Load environment variables from .env file
-load_dotenv()
 
 # --- Langfuse Configuration ---
 # Initialize once and store in session state if not already present
@@ -133,10 +131,18 @@ def handle_user_input():
                     display_response = translate_text(
                         english_ai_response, target_language=final_language, original_query=prompt
                     ) if final_language != 'en' else english_ai_response
+
+                    if "https://" in display_response:
+                        st.video(display_response.split("https://")[1])
+                    elif "Would you like to upgrade" in display_response:
+                        st.success(display_response)
+                    else:
+                        st.markdown(display_response)
+
                 else:
                     display_response = "Sorry, no response was generated."
+                    st.markdown(display_response)
 
-                st.markdown(display_response)
                 st.session_state.messages.append({"role": "assistant", "content": display_response})
             except Exception as e:
                 error_message = "Sorry, I encountered an error while processing your request. Please try again."

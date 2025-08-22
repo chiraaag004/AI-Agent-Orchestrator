@@ -1,0 +1,4 @@
+room_type,total_rooms,rooms_available,base_price
+single,20,10,100
+double,15,5,150
+suite,5,2,250

@@ -7,6 +7,8 @@ import time
 from datetime import datetime
 from streamlit_autorefresh import st_autorefresh
 
+from dotenv import load_dotenv
+load_dotenv()
 
 st.set_page_config(
     page_title="Agent Admin Dashboard",
@@ -25,18 +27,12 @@ except Exception as e:
 
 @st.cache_data(ttl=300)
 def get_traces():
-    traces = []
-    trace_list = langfuse_client.api.trace.list(limit=20)
-    for trace_summary in trace_list.data:
-        try:
-            full_trace = langfuse_client.api.trace.get(trace_summary.id)
-            traces.append(full_trace)
-            time.sleep(0.1)
-        except Exception as e:
-            st.sidebar.error(f"Trace error: {e}")
-            if "429" in str(e):
-                break
-    return traces
+    try:
+        traces_page = langfuse_client.api.trace.list(limit=20)
+        return traces_page.data
+    except Exception as e:
+        st.sidebar.error(f"Trace error: {e}")
+        return []
 
 def render_dashboard(traces):
     if not traces:

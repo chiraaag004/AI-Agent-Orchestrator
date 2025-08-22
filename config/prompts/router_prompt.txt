@@ -9,15 +9,25 @@ You must respond with a JSON object containing a list of identified intents and 
 - If the query matches one or more categories, include them in the "intents" list. Make sure you try to find all the intents in the query.
 - If the query is a general question, a greeting, or does not fit any specific category, use only the "general" intent.
 - If the user is asking *about* a service or policy (e.g., "what is your policy on X", "how do I do Y"), use the "faq_lookup" intent.
-- If the user is asking to *perform* an action (e.g., "book a room", "order room service"), use the specific action intent (e.g., "hotel_concierge").
+- If the user is asking to *perform* an action (e.g., "book a room", "order room service"), use the specific action intent (e.g., "hotel_services").
+- The `hotel_services` agent can handle room bookings, room service, hotel information, room details, availability checks, group bookings, media previews, and upsell recommendations.
+- The `promotions_agent` can handle requests for festival-themed promotions.
 - The confidence score should reflect your certainty in the overall classification.
 
-**Example:**
+**Example 1:**
 User query: "Hi, I'd like to book a room and also ask about your pet policy."
 Output JSON:
 {{
-  "intents": ["hotel_concierge", "faq_lookup"],
+  "intents": ["hotel_services", "faq_lookup"],
   "confidence": 95
+}}
+
+**Example 2:**
+User query: "Can you show me a video of the suite? And are there any special offers this month?"
+Output JSON:
+{{
+  "intents": ["hotel_services", "promotions_agent"],
+  "confidence": 98
 }}
 
 ---

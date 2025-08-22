@@ -30,30 +30,38 @@ PIPER_VOICE_MODEL_PATH = os.getenv("PIPER_VOICE_MODEL_PATH", "models/tts/en_US-l
 # means the agent has access to all available tools.
 AGENT_TOOL_MAPPING = {
     "support_agent": [
-        "faq_tool" # Matches faq_tool.py
+        "faq_tool"
     ],
     "emergency_services": [
-        "emergency_help_tool" # Matches emergency_help.py
+        "emergency_help_tool"
     ],
     "hotel_services": [
-        "book_room_tool", # from hotel_tool.py
-        "room_service_tool", # from hotel_searcher.py
-        "hotel_faq_tool", # from hotel_tool.py
-        "get_hotel_info_tool", # from hotel_tool.py
-        "get_room_details_tool" # from hotel_searcher.py
+        "book_room_tool",
+        "room_service_tool",
+        "hotel_faq_tool",
+        "get_hotel_info_tool",
+        "get_room_details_tool",
+        "check_availability_tool",
+        "group_booking_tool",
+        "get_media_tool",
+        "upsell_recommendation_tool",
+        "search_knowledge_base",
     ],
     "attractions_agent": [
-        "find_nearby_attractions_tool", # from attractions_tool.py
-        "provide_local_recommendations_tool" # from attractions_tool.py
+        "find_nearby_attractions_tool",
+        "provide_local_recommendations_tool"
     ],
     "transportation_agent": [
-        "local_transport_tool", # from local_transport_tool.py
-        "book_local_transport_tool" # from local_transport_tool.py
+        "local_transport_tool",
+        "book_local_transport_tool"
     ],
     "weather_checker": [
-        "get_weather_forecast" # from weather_checker.py
+        "get_weather_forecast"
     ],
-    "general": None # Fallback agent with access to all tools
+    "promotions_agent": [
+        "festival_promotion_tool"
+    ],
+    "general": None
 }
 
 # The router will now choose from these high-level agent capabilities.
