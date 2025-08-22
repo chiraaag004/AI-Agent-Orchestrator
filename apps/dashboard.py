@@ -153,7 +153,7 @@ def render_dashboard(traces):
 
     with tab4:
       with tab4:
-        st.markdown("## 📝 Bookings Overview")
+        st.markdown("## 📝 Data Overview")
 
         table_options = {
             "Room Bookings": "data/bookings.csv",
