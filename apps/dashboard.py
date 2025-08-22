@@ -89,7 +89,7 @@ def render_dashboard(traces):
     kpi2.metric("⏱️ Avg Latency (s)", f"{df['Latency (s)'].dropna().mean():.2f}" if not df['Latency (s)'].isna().all() else "N/A")
 
     # Tabs
-    tab1, tab2, tab3, tab4 = st.tabs(["📋 Table View", "📊 Visual Analytics", "🧠 Trace Breakdown", "📝 Bookings Overview"])
+    tab1, tab2, tab3, tab4 = st.tabs(["📋 Table View", "📊 Visual Analytics", "🧠 Trace Breakdown", "📝 Data Overview"])
 
     with tab1:
         st.dataframe(
