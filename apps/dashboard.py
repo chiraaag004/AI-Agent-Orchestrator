@@ -151,7 +151,10 @@ def render_dashboard(traces):
         table_options = {
             "Room Bookings": "data/bookings.csv",
             "Room Service Orders": "data/room_service.csv",
-            "Transport Bookings": "data/transport_bookings.csv"
+            "Transport Bookings": "data/transport_bookings.csv",
+            "Festival Discounts": "data/festivals.csv",
+            "Room Inventory": "data/room_inventory.csv",
+            "Social Media": "data/social_media.csv"
         }
 
         selected_table = st.selectbox("Select Booking Table", options=list(table_options.keys()))
